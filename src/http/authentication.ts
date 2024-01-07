@@ -1,6 +1,7 @@
 import Elysia, { Static, t } from 'elysia'
-import cookie from '@elysiajs/cookie'
-import jwt from '@elysiajs/jwt'
+import { cookie } from '@elysiajs/cookie'
+import { jwt } from '@elysiajs/jwt'
+import { bearer } from '@elysiajs/bearer'
 import { env } from '@/env'
 import { UnauthorizedError } from './routes/errors/unauthorized-error'
 
@@ -28,10 +29,15 @@ export const authentication = new Elysia()
     }),
   )
   .use(cookie())
-  .derive(({ jwt, cookie, setCookie, removeCookie }) => {
+  .use(bearer())
+  .derive(({ jwt, bearer }) => {
     return {
       getCurrentUser: async () => {
-        const payload = await jwt.verify(cookie.auth)
+        if (!bearer) {
+          throw new UnauthorizedError()
+        }
+
+        const payload = await jwt.verify(bearer)
 
         if (!payload) {
           throw new UnauthorizedError()
@@ -39,16 +45,16 @@ export const authentication = new Elysia()
 
         return payload
       },
-      signUser: async (payload: Static<typeof jwtPayloadSchema>) => {
-        setCookie('auth', await jwt.sign(payload), {
-          httpOnly: true,
-          maxAge: 7 * 86400,
-          path: '/',
-          domain: '.zorin.app.br',
-        })
+      signUser: async (
+        payload: Static<typeof jwtPayloadSchema>,
+        expiration: number,
+      ) => {
+        const jwtToken = await jwt.sign(payload)
+
+        return { token: jwtToken, expiration }
       },
       signOut: () => {
-        removeCookie('auth')
+        console.log('Sign Out')
       },
     }
   })

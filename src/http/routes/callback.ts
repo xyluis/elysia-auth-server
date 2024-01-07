@@ -22,13 +22,17 @@ export const callback = new Elysia()
     '/callback',
     async ({ query, set, signUser }) => {
       const { code, error, error_description } = query
-      const clientRedirectUri = new URL('/api/v1/callback', env.CLIENT_BASE_URI)
+      const authRedirectUrl = new URL('/api/v1/auth', env.CLIENT_BASE_URI)
+      const callbackRedirectUrl = new URL(
+        '/api/v1/callback',
+        env.CLIENT_BASE_URI,
+      )
 
       if (!code && error && error_description) {
-        clientRedirectUri.searchParams.append('status', CallbackStatus.Fail)
-        clientRedirectUri.searchParams.append('error', error)
+        authRedirectUrl.searchParams.append('status', CallbackStatus.Fail)
+        authRedirectUrl.searchParams.append('error', error)
 
-        set.redirect = clientRedirectUri.toString()
+        set.redirect = authRedirectUrl.toString()
       }
 
       if (code) {
@@ -63,14 +67,21 @@ export const callback = new Elysia()
 
         const userData = (await userResponse.json()) as any
 
-        await signUser({
-          sub: userData.id,
-          username: userData.username,
-        })
+        const { token, expiration } = await signUser(
+          {
+            sub: userData.id,
+            username: userData.username,
+          },
+          data.expires_in,
+        )
 
-        clientRedirectUri.searchParams.append('status', CallbackStatus.Success)
+        callbackRedirectUrl.searchParams.append('token', token)
+        callbackRedirectUrl.searchParams.append(
+          'expiration',
+          expiration.toString(),
+        )
 
-        set.redirect = clientRedirectUri.toString()
+        set.redirect = callbackRedirectUrl.toString()
       }
     },
     {
