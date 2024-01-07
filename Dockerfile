@@ -33,4 +33,5 @@ COPY --from=prerelease /usr/src/app/package.json .
 
 # run the app
 USER bun
+CMD [ "ls" ]
 ENTRYPOINT [ "bun", "run", "dist/server.js" ]
