@@ -17,7 +17,7 @@ const app = new Elysia()
       origin: (request): boolean => {
         const origin = request.headers.get('origin')
 
-        if (!origin || origin !== 'http://localhost:3000') {
+        if (!origin) {
           return false
         }
 
