@@ -50,6 +50,8 @@ export const callback = new Elysia()
 
         const data = (await response.json()) as any
 
+        console.log(data)
+
         if (data.error) {
           throw new CallbackError(data.error, data.error_description)
         }
@@ -62,6 +64,8 @@ export const callback = new Elysia()
         })
 
         const userData = (await userResponse.json()) as any
+
+        console.log(userData)
 
         await signUser({
           sub: userData.id,
