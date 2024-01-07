@@ -44,6 +44,7 @@ export const authentication = new Elysia()
           httpOnly: true,
           maxAge: 7 * 86400,
           path: '/',
+          domain: '.zorin.app.br',
         })
       },
       signOut: () => {
