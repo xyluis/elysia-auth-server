@@ -3,6 +3,7 @@ import { CallbackError } from './errors/callback-error'
 import { env } from '@/env'
 import { CallbackStatus, GrantTypes } from '@/utils/enums'
 import { authentication } from '../authentication'
+import { getUserAvatarUrl } from '@/utils/get-user-avatar-url'
 
 const baseURL = 'https://discord.com/api/v10'
 
@@ -71,6 +72,8 @@ export const callback = new Elysia()
           {
             sub: userData.id,
             username: userData.username,
+            avatarURL: getUserAvatarUrl(userData.id, userData.avatar),
+            displayName: userData.global_name,
           },
           data.expires_in,
         )
