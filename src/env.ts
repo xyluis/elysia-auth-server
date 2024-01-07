@@ -2,7 +2,6 @@ import { z } from 'zod'
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(3333),
-  API_BASE_URI: z.string().url(),
   CLIENT_BASE_URI: z.string().url(),
   JWT_SECRET_KEY: z.string().min(1),
   DISCORD_CLIENT_ID: z.string(),
