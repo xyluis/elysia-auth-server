@@ -1,6 +1,6 @@
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1 as base
+FROM oven/bun:latest as base
 WORKDIR /usr/src/app
 
 # install dependencies into temp directory
@@ -34,4 +34,4 @@ COPY --from=prerelease /usr/src/app/package.json .
 # run the app
 USER bun
 CMD [ "ls" ]
-ENTRYPOINT [ "bun", "run", "dist/server.js" ]
+ENTRYPOINT [ "bun", "run", "server.js" ]
