@@ -8,8 +8,8 @@ import { UnauthorizedError } from './routes/errors/unauthorized-error'
 const jwtPayloadSchema = t.Object({
   sub: t.String(),
   username: t.String(),
-  displayName: t.Optional(t.String()),
-  avatarURL: t.String(),
+  displayName: t.Union([t.Null(), t.Optional(t.String())]),
+  avatar: t.Union([t.Null(), t.Optional(t.String())]),
 })
 
 export const authentication = new Elysia()

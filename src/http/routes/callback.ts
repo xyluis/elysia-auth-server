@@ -1,11 +1,9 @@
 import Elysia, { t } from 'elysia'
 import { CallbackError } from './errors/callback-error'
 import { env } from '@/env'
-import { CallbackStatus, GrantTypes } from '@/utils/enums'
+import { CallbackStatus } from '@/utils/enums'
 import { authentication } from '../authentication'
-import { getUserAvatarUrl } from '@/utils/get-user-avatar-url'
-
-const baseURL = 'https://discord.com/api/v10'
+import { getDiscordAccessToken, getDiscordUserData } from '@/utils/discord'
 
 export const callback = new Elysia()
   .use(authentication)
@@ -37,42 +35,18 @@ export const callback = new Elysia()
       }
 
       if (code) {
-        const bodyParams = new URLSearchParams({
-          grant_type: GrantTypes.AuthorizationCode,
-          client_id: env.DISCORD_CLIENT_ID,
-          client_secret: env.DISCORD_CLIENT_SECRET,
-          code,
-          redirect_uri: env.DISCORD_CLIENT_REDIRECT_URI,
-        })
+        const data = await getDiscordAccessToken(code)
 
-        const response = await fetch(`${baseURL}/oauth2/token`, {
-          method: 'POST',
-          body: bodyParams.toString(),
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        })
-
-        const data = (await response.json()) as any
-
-        if (data.error) {
-          throw new CallbackError(data.error, data.error_description)
-        }
-
-        const userResponse = await fetch(`${baseURL}/users/@me`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${data.token_type} ${data.access_token}`,
-          },
-        })
-
-        const userData = (await userResponse.json()) as any
+        const userData = await getDiscordUserData(
+          data.token_type,
+          data.access_token,
+        )
 
         const { token, expiration } = await signUser(
           {
             sub: userData.id,
             username: userData.username,
-            avatarURL: getUserAvatarUrl(userData.id, userData.avatar),
+            avatar: userData.avatar,
             displayName: userData.global_name,
           },
           data.expires_in,

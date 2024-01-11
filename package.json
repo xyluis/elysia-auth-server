@@ -11,6 +11,7 @@
     "@elysiajs/cookie": "^0.8.0",
     "@elysiajs/cors": "^0.8.0",
     "@elysiajs/jwt": "^0.8.0",
+    "discord-api-types": "^0.37.67",
     "elysia": "latest",
     "zod": "^3.22.4"
   },
