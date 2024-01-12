@@ -8,7 +8,7 @@ import { signOut } from './routes/sign-out'
 import { env } from '@/env'
 import { authCookie } from './auth-cookie'
 
-const app = new Elysia()
+const app = new Elysia({ aot: env.RUNTIME === 'bun' })
   .use(
     cors({
       credentials: true,

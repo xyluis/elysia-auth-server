@@ -3,6 +3,7 @@
     "@rocketseat/eslint-config/node"
   ],
   "rules": {
-    "camelcase": "off"
+    "camelcase": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
   }
 }
