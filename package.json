@@ -4,7 +4,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/http/server.ts",
-    "build:disabled": "bun build ./src/http/server.ts --outdir ./dist"
+    "build": "bun build ./src/http/server.ts --outdir ./dist"
   },
   "dependencies": {
     "@elysiajs/bearer": "^0.8.0",
