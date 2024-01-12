@@ -5,7 +5,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/http/server.ts",
     "build": "bun build ./src/http/server.ts --outdir ./dist",
-    "build:vercel": "bun run build && bun scripts/transform-paths.ts"
+    "build:vercel": "bun scripts/transform-paths.ts",
+    "start": "bun run build && bun src/index.ts"
   },
   "dependencies": {
     "@elysiajs/bearer": "^0.8.0",
