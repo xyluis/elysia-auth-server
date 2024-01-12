@@ -1,10 +1,8 @@
 import Elysia from 'elysia'
-import { authentication } from '../authentication'
+import { authCookie } from '../auth-cookie'
 
 export const signOut = new Elysia()
-  .use(authentication)
-  .post('/sign-out', ({ signOut, set }) => {
+  .use(authCookie)
+  .post('/sign-out', ({ signOut }) => {
     signOut()
-
-    set.status = 200
   })

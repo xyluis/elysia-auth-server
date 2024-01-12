@@ -1,12 +1,12 @@
 import { Elysia } from 'elysia'
 import { cors } from '@elysiajs/cors'
-import { authentication } from './authentication'
 import { health } from './routes/health'
 import { authorize } from './routes/authorize'
 import { callback } from './routes/callback'
 import { check } from './routes/check'
 import { signOut } from './routes/sign-out'
 import { env } from '@/env'
+import { authCookie } from './auth-cookie'
 
 const app = new Elysia()
   .use(
@@ -25,7 +25,7 @@ const app = new Elysia()
       },
     }),
   )
-  .use(authentication)
+  .use(authCookie)
   .use(health)
   .group('/api/v1', (app) => {
     return app.use(authorize).use(callback).use(check).use(signOut)

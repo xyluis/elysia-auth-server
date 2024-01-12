@@ -1,9 +1,9 @@
 import Elysia from 'elysia'
-import { authentication } from '../authentication'
 import { getUserAvatarUrl } from '@/utils/discord'
+import { authCookie } from '../auth-cookie'
 
 export const check = new Elysia()
-  .use(authentication)
+  .use(authCookie)
   .get('/check', async ({ getCurrentUser }) => {
     const { sub, username, avatar, displayName } = await getCurrentUser()
 

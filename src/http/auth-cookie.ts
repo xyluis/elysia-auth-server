@@ -1,7 +1,6 @@
 import Elysia, { Static, t } from 'elysia'
-import cookie from '@elysiajs/cookie'
-import jwt from '@elysiajs/jwt'
-import { bearer } from '@elysiajs/bearer'
+import { cookie } from '@elysiajs/cookie'
+import { jwt } from '@elysiajs/jwt'
 import { env } from '@/env'
 import { UnauthorizedError } from './routes/errors/unauthorized-error'
 
@@ -12,7 +11,7 @@ const jwtPayloadSchema = t.Object({
   avatar: t.Union([t.Null(), t.Optional(t.String())]),
 })
 
-export const authentication = new Elysia()
+export const authCookie = new Elysia()
   .error({
     UNAUTHORIZED: UnauthorizedError,
   })
@@ -31,15 +30,16 @@ export const authentication = new Elysia()
     }),
   )
   .use(cookie())
-  .use(bearer())
-  .derive(({ jwt, bearer }) => {
+  .derive(({ jwt, cookie, setCookie, removeCookie, set }) => {
     return {
       getCurrentUser: async () => {
-        if (!bearer) {
+        if (!cookie.auth) {
           throw new UnauthorizedError()
         }
 
-        const payload = await jwt.verify(bearer)
+        console.log(cookie.auth)
+
+        const payload = await jwt.verify(cookie.auth)
 
         if (!payload) {
           throw new UnauthorizedError()
@@ -56,10 +56,16 @@ export const authentication = new Elysia()
           exp: expiration,
         })
 
-        return { token: jwtToken, expiration }
+        setCookie('auth', jwtToken, {
+          httpOnly: true,
+          maxAge: expiration,
+          path: '/',
+        })
       },
       signOut: () => {
-        console.log('Sign Out')
+        console.log(cookie)
+        removeCookie('auth')
+        console.log(set.headers)
       },
     }
   })
